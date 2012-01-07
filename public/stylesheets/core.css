@@ -1,0 +1,30 @@
+body{
+	background: #fff;
+	margin: 0;
+	text-align: center;
+	font-size: 10pt;
+}
+
+#container{
+	margin-top: 5px;
+	text-align:left;
+}
+
+#header{
+	border-bottom: 1px #666 solid;
+}
+
+#form{
+	border-bottom: 1px #ddd solid;
+	padding-bottom: 30px;
+	padding-top: 30px;
+}
+
+.post_article{
+	padding-left: 30px;
+	padding-top: 30px;
+	padding-bottom: 30px;
+	padding-right:30px;
+	border-bottom: 1px #ddd solid;
+	display: none;
+}

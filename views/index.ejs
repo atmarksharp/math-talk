@@ -1,0 +1,61 @@
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+var socket = io.connect(window.location.href);
+socket.on('connect', function(msg) {
+  console.log("connet");
+/*  document.getElementById("connectId").innerHTML = 
+    "あなたの接続ID::" + socket.socket.transport.sessid;
+  document.getElementById("type").innerHTML = 
+    "接続方式::" + socket.socket.transport.name;*/
+});
+
+// メッセージを受けたとき
+socket.on('message', function(msg) {
+  // メッセージを画面に表示する
+	$("#content").append(msg.value);
+	$(".post_article:hidden").fadeIn("1500");
+});
+
+// メッセージを送る
+function SendMsg() {
+	var name = document.getElementById("name").value;
+	var comment = document.getElementById("comment").value;
+	var mode;
+	for(var i=0; i<document.formname.mode.length; i++){
+		if(document.formname.mode[i].checked)
+			mode = i;
+	}
+	// メッセージを発射する
+	var msg;
+	if(mode==1){
+		var eq=comment.replace(/¥/g,"\\");
+		msg='<div class="post_article"><img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent(eq)+'" alt="equation" /></div>';
+	}else{
+		msg='<div class="post_article">'+comment+"</div>";
+	}
+	socket.emit('message', { value: msg });
+}
+// 切断する
+function DisConnect() {
+  var msg = socket.socket.transport.sessid + "は切断しました。";
+  // メッセージを発射する
+  socket.emit('message', { value: msg });
+  // socketを切断する
+  socket.disconnect();
+}
+</script>
+<div id="content" class="grid_12"></div>
+<div class="clear"></div>
+<br>
+<form name="formname">
+<input name="id" type="hidden" value="<?php echo $id; ?>">
+　Name: <input id="name" name="name" type="text" /><br />
+　Mode: <input name="mode" type="radio" value="0" checked/>text
+<input name="mode" type="radio" value="1" />equation
+<input name="mode" type="radio" value="2" />figure<br />
+　Content:<br />
+ <textarea id="comment" name="content" cols="100" rows="5"></textarea><br />
+　<input id="submit_btn" type="button" value="submit" onclick="SendMsg()" />
+　<input id="reset_btn" type="reset" value="reset" /><br/>
+</form>
+<div id="receiveMsg"></div>
