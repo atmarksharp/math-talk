@@ -1,1 +1,1 @@
-web: production node app.js
+web: production node web.js
