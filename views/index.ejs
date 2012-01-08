@@ -36,7 +36,7 @@ function SendMsg() {
 	date    = myMess1 + " " + myMess2 + " " + myMess3;
 		
 	msg = '<div class="post_article grid_12"><div class="content-name">'+name+': '+date+'</div><div class="content-body">';
-	comment = comment.replace(/(http:\/\/[\x21-\x7e]+\.[\x21-\x7e]+)/gi, "<a href='$1'>$1</a>");
+	comment = comment.replace(/(http:\/\/[\x21-\x7e]+\.[\x21-\x7e]+)/gi, "<a href='$1' target='_blank'>$1</a>");
 	if(comment!="/help"){
 		var resArray=comment.split("$");
 		for(var i=0; i<resArray.length; i++){
