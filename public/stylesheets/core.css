@@ -17,7 +17,7 @@ body{
 #formname{
 	border-bottom: 1px #ddd solid;
 	padding-bottom: 30px;
-	padding-top: 30px;
+	padding-top:0;
 }
 
 .post_article{
@@ -37,7 +37,7 @@ body{
 }
 
 .content-body{
-	font-size: 12pt;
+	font-size: 10pt;
 	padding-left: 10px;
 }
 
@@ -48,4 +48,9 @@ body{
 
 .hidden-comment{
 	display: none;
+}
+
+#name-div{
+	margin: 0;
+	padding: 0;
 }

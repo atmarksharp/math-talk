@@ -16,7 +16,7 @@ function SendMsg() {
 	var name = document.getElementById("name").value;
 	var comment = document.getElementById("comment").value;
 	var rawcomment=comment;
-	if(comment=="-help") name = "MathTalk System"
+	if(comment=="/help") name = "MathTalk System"
 	var msg = '';
 	myTbl     = new Array("日","月","火","水","木","金","土");
 	myD       = new Date();
@@ -35,8 +35,8 @@ function SendMsg() {
 	myMess3   = myHours + "時" + myMinutes + "分" + mySeconds + "秒";
 	date    = myMess1 + " " + myMess2 + " " + myMess3;
 		
-	msg = '<div class="post_article"><div class="content-name">'+name+': '+date+'</div><div class="content-body">';
-	if(comment!="-help"){
+	msg = '<div class="post_article grid_12"><div class="content-name">'+name+': '+date+'</div><div class="content-body">';
+	if(comment!="/help"){
 		var resArray=comment.split("$");
 		for(var i=0; i<resArray.length; i++){
 			if(i%2==0){
@@ -55,8 +55,14 @@ function SendMsg() {
 	}
 	
 	msg+='</div><div class="hidden-comment">'+rawcomment+'</div>'
-	if(rawcomment!='') socket.emit('message', { value: msg });
-	$("#comment").val("");
+	if(rawcomment!=''&&name!=''){
+		socket.emit('message', { value: msg });
+		$("#name-div").css("display","none");
+		$("#comment").val("");
+	}
+	if(name==''){
+		alert("name is empty.");
+	}
 }
 // 切断する
 function DisConnect() {
@@ -83,7 +89,7 @@ $(document).ready(
 <br>
 <form name="formname">
 <input name="id" type="hidden" value="<?php echo $id; ?>">
-　Name: <input id="name" name="name" type="text" /><br />
+　<div id="name-div">Name: <input id="name" name="name" type="text" /></div><br />
  <textarea id="comment" class="comment" name="content" cols="100" rows="5"></textarea><br />
 　<input id="submit_btn" type="button" value="submit" onclick="SendMsg()" />
 　<input id="reset_btn" type="reset" value="reset" /><br/>
