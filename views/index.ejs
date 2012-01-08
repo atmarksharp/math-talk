@@ -22,10 +22,10 @@ socket.on('message', function(msg) {
 function SendMsg() {
 	var name = document.getElementById("name").value;
 	var comment = document.getElementById("comment").value;
-	var mode;
+	/*var mode;
 	for(var i=0; i<document.formname.mode.length; i++){
 		if(document.formname.mode[i].checked) mode = i;
-	}
+	}*/
 	// メッセージを発射する
 	var msg;
 	myTbl     = new Array("日","月","火","水","木","金","土");
@@ -45,12 +45,20 @@ function SendMsg() {
 	myMess3   = myHours + "時" + myMinutes + "分" + mySeconds + "秒";
 	date    = myMess1 + " " + myMess2 + " " + myMess3;
 	
-	if(mode==1){
-		var eq=comment.replace(/¥/g,"\\");
-		msg='<div class="post_article"><div class="content-name">'+name+': '+date+'</div><div class="content-body"><img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent(eq)+'" alt="equation" /></div></div>';
-	}else{
-		msg='<div class="post_article"><div class="content-name">'+name+': '+date+'</div><div class="content-body">'+comment+"</div></div>";
+	msg = '<div class="post_article"><div class="content-name">'+name+': '+date+'</div><div class="content-body">';
+	var resArray=comment.split("$");
+	for(var i=0; i<resArray.length; i++){
+		if(i%2==0){
+			resArray[i] = resArray[i].replace(/\r\n/g, "<br />");
+			resArray[i] = resArray[i].replace(/(\n|\r)/g, "<br />");
+			msg+=resArray[i];
+		}else{
+			resArray[i].replace(/¥/g,"\\");
+			msg+='<img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent(resArray[i])+'" alt="equation" />'
+		}
 	}
+
+	msg+='</div></div>'
 	socket.emit('message', { value: msg });
 }
 // 切断する
@@ -68,10 +76,10 @@ function DisConnect() {
 <form name="formname">
 <input name="id" type="hidden" value="<?php echo $id; ?>">
 　Name: <input id="name" name="name" type="text" /><br />
-　Mode: <input name="mode" type="radio" value="0" checked/>text
+<!--　Mode: <input name="mode" type="radio" value="0" checked/>text
 <input name="mode" type="radio" value="1" />equation
 <input name="mode" type="radio" value="2" />figure<br />
-　Content:<br />
+　Content:<br />-->
  <textarea id="comment" name="content" cols="100" rows="5"></textarea><br />
 　<input id="submit_btn" type="button" value="submit" onclick="SendMsg()" />
 　<input id="reset_btn" type="reset" value="reset" /><br/>
