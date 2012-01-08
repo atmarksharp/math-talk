@@ -14,6 +14,8 @@ socket.on('message', function(msg) {
   // メッセージを画面に表示する
 	$("#content").append(msg.value);
 	$(".post_article:hidden").fadeIn("1500");
+	var e = document.getElementById("content");
+	e.scrollTop = e.scrollHeight;
 });
 
 // メッセージを送る
@@ -22,16 +24,32 @@ function SendMsg() {
 	var comment = document.getElementById("comment").value;
 	var mode;
 	for(var i=0; i<document.formname.mode.length; i++){
-		if(document.formname.mode[i].checked)
-			mode = i;
+		if(document.formname.mode[i].checked) mode = i;
 	}
 	// メッセージを発射する
 	var msg;
+	myTbl     = new Array("日","月","火","水","木","金","土");
+	myD       = new Date();
+
+	myYear    = myD.getYear()
+	myYear4   = (myYear < 2000) ? myYear+1900 : myYear;
+	myMonth   = myD.getMonth() + 1;
+	myDate    = myD.getDate();
+	myDay     = myD.getDay();
+	myHours   = myD.getHours();
+	myMinutes = myD.getMinutes();
+	mySeconds = myD.getSeconds();
+
+	myMess1   = myYear4 + "年" + myMonth + "月" + myDate + "日";
+	myMess2   = "("+myTbl[myDay] + ")";
+	myMess3   = myHours + "時" + myMinutes + "分" + mySeconds + "秒";
+	date    = myMess1 + " " + myMess2 + " " + myMess3;
+	
 	if(mode==1){
 		var eq=comment.replace(/¥/g,"\\");
-		msg='<div class="post_article"><img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent(eq)+'" alt="equation" /></div>';
+		msg='<div class="post_article"><div class="content-name">'+name+': '+date+'</div><div class="content-body"><img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent(eq)+'" alt="equation" /></div></div>';
 	}else{
-		msg='<div class="post_article">'+comment+"</div>";
+		msg='<div class="post_article"><div class="content-name">'+name+': '+date+'</div><div class="content-body">'+comment+"</div></div>";
 	}
 	socket.emit('message', { value: msg });
 }
