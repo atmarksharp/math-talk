@@ -35,7 +35,7 @@ socket.on('message', function(msg) {
 		$("#content").append(msgcontent);
 		$(".post_article:hidden").fadeIn("1500");
 		var e = document.getElementById("content");
-		e.scrollTop = e.scrollHeight;
+		e.scrollTop = e.scrollHeight+1000000;
 	}
 });
 
@@ -44,6 +44,8 @@ function SendMsg() {
 	var comment = document.getElementById("comment").value;
 	var rawcomment=comment;
 	if(comment=="/help") name = "MathTalk System"
+	comment = comment.replace(/\\\[/g, "$");
+	comment = comment.replace(/\\\]/g, "$")
 	var msg = '';
 	var room = document.getElementById("room").value;
 	myTbl     = new Array("sun","mon","tue","wed","thu","fri","sat");
@@ -64,8 +66,9 @@ function SendMsg() {
 	date    = myMess1 + " " + myMess2 + " " + myMess3;
 	
 	msg += room+'\:';
-	msg += '<div class="post_article grid_12 alpha"><div class="content-name">'+name+': '+date+'</div><div class="content-body">';
+	msg += '<div class="post_article grid_12 alpha"><div class="content-name"><span class="namespan">'+name+'</span>:    '+date+'</div><div class="content-body">';
 	comment = comment.replace(/(http:\/\/[\x21-\x7e]+\.[\x21-\x7e]+)/gi, "<a href='$1' target='_blank'>$1</a>");
+	comment = comment.replace(/\$MaThTaLk\$/, "<img src='./images/mathtalkmini.png' alt='mathtalk'/>")
 	if(comment!="/help"){
 		var resArray=comment.split("$");
 		for(var i=0; i<resArray.length; i++){
@@ -97,14 +100,14 @@ function SendMsg() {
 	}
 	
 	if(rawcomment!=''&&name!=''&&room!=''){
-		counter++;
-		nowcounter=counter;
 		msg+='</div><div class="hidden-comment" id="'+name+'\-'+counter+'">'+rawcomment+'</div>'
 		socket.emit('message', { value: msg });
 		$("#comment").val("");
 	}else if(rawcomment!=''){
 		alert(errorMsg);
 	}
+	counter++;
+	nowcounter=counter;
 
 }
 
@@ -114,7 +117,7 @@ $(document).ready(
 			{
 				"^enter":function(){SendMsg();},
 				"^up":function(){
-					(nowcounter>1)?nowcounter--:nowcounter=1;
+					(nowcounter>0)?nowcounter--:nowcounter=0;
 					var id = "#"+document.getElementById("name").value+"\-"+nowcounter;
 					var str = $(id).text();
 					$('#comment').val(str);
@@ -143,6 +146,10 @@ $(document).ready(
 <div class="clear"></div>
  <textarea id="comment" class="comment" name="content" cols="100" rows="5"></textarea><br />
 　<input id="submit_btn" type="button" value="submit" onclick="SendMsg()" />
-　<input id="reset_btn" type="reset" value="reset" /><br/>
+　<input id="reset_btn" type="reset" value="reset" />
+<a href="javascript:OpenLatexEditor('comment','latex','',false,'','full');" class="editorlink">
+Editor by CodeCogs
+</a>
+
 </form>
 <div id="receiveMsg"></div>

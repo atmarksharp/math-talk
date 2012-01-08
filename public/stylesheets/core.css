@@ -86,3 +86,13 @@ body{
 	float: left;
 	font-size: 6pt;
 }
+
+.editorlink{
+	padding: 11px;
+	font-weight:600;
+	font-size: 6pt;
+}
+
+.namespan{
+	font-weight: 600;
+}
