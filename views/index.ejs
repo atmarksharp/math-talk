@@ -36,6 +36,7 @@ function SendMsg() {
 	date    = myMess1 + " " + myMess2 + " " + myMess3;
 		
 	msg = '<div class="post_article grid_12"><div class="content-name">'+name+': '+date+'</div><div class="content-body">';
+	comment = comment.replace(/(http:\/\/[\x21-\x7e]+\.[\x21-\x7e]+)/gi, "<a href='$1'>$1</a>");
 	if(comment!="/help"){
 		var resArray=comment.split("$");
 		for(var i=0; i<resArray.length; i++){
@@ -50,8 +51,8 @@ function SendMsg() {
 		}
 	} else {
 		msg+= "help file:<br />　　The charactors between $ and $ means "+'<img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent("\\LaTeX")+'" alt="LaTeX" /><br />';
-		msg+= "　　The shortcut-key of posting is ctrl+Enter( or command+Enter )<br />";
-		msg+= "　　You can rewrite by command+up<br />";
+		msg+= "　　Ctrl+Enter: submit<br />";
+		msg+= "　　Ctrl+↑: history<br />";
 	}
 	
 	msg+='</div><div class="hidden-comment">'+rawcomment+'</div>'
