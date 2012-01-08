@@ -43,6 +43,7 @@ body{
 	margin-bottom: 10px;
 	font-size: 9px;
 	padding-left: 10px;
+	background:#eee;
 }
 
 .hidden-comment{
@@ -95,4 +96,12 @@ body{
 
 .namespan{
 	font-weight: 600;
+}
+
+.bold{
+	font-weight:600;
+}
+
+.color-light{
+	color: #ccc;
 }
