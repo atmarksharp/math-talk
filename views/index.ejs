@@ -3,31 +3,21 @@
 var socket = io.connect(window.location.href);
 socket.on('connect', function(msg) {
   console.log("connet");
-/*  document.getElementById("connectId").innerHTML = 
-    "あなたの接続ID::" + socket.socket.transport.sessid;
-  document.getElementById("type").innerHTML = 
-    "接続方式::" + socket.socket.transport.name;*/
 });
 
-// メッセージを受けたとき
 socket.on('message', function(msg) {
-  // メッセージを画面に表示する
 	$("#content").append(msg.value);
 	$(".post_article:hidden").fadeIn("1500");
 	var e = document.getElementById("content");
 	e.scrollTop = e.scrollHeight;
 });
 
-// メッセージを送る
 function SendMsg() {
 	var name = document.getElementById("name").value;
 	var comment = document.getElementById("comment").value;
-	/*var mode;
-	for(var i=0; i<document.formname.mode.length; i++){
-		if(document.formname.mode[i].checked) mode = i;
-	}*/
-	// メッセージを発射する
-	var msg;
+	var rawcomment=comment;
+	if(comment=="-help") name = "MathTalk System"
+	var msg = '';
 	myTbl     = new Array("日","月","火","水","木","金","土");
 	myD       = new Date();
 
@@ -44,22 +34,29 @@ function SendMsg() {
 	myMess2   = "("+myTbl[myDay] + ")";
 	myMess3   = myHours + "時" + myMinutes + "分" + mySeconds + "秒";
 	date    = myMess1 + " " + myMess2 + " " + myMess3;
-	
+		
 	msg = '<div class="post_article"><div class="content-name">'+name+': '+date+'</div><div class="content-body">';
-	var resArray=comment.split("$");
-	for(var i=0; i<resArray.length; i++){
-		if(i%2==0){
-			resArray[i] = resArray[i].replace(/\r\n/g, "<br />");
-			resArray[i] = resArray[i].replace(/(\n|\r)/g, "<br />");
-			msg+=resArray[i];
-		}else{
-			resArray[i].replace(/¥/g,"\\");
-			msg+='<img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent(resArray[i])+'" alt="equation" />'
+	if(comment!="-help"){
+		var resArray=comment.split("$");
+		for(var i=0; i<resArray.length; i++){
+			if(i%2==0){
+				resArray[i] = resArray[i].replace(/\r\n/g, "<br />");
+				resArray[i] = resArray[i].replace(/(\n|\r)/g, "<br />");
+				msg+=resArray[i];
+			}else{
+				resArray[i] = resArray[i].replace(/\¥/g,"\\");
+				msg+='<img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent(resArray[i])+'" alt="'+rawcomment+'" />'
+			}
 		}
+	} else {
+		msg+= "help file:<br />　　The charactors between $ and $ means "+'<img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent("\\LaTeX")+'" alt="LaTeX" /><br />';
+		msg+= "　　The shortcut-key of posting is ctrl+Enter( or command+Enter )<br />";
+		msg+= "　　You can rewrite by command+up<br />";
 	}
-
-	msg+='</div></div>'
-	socket.emit('message', { value: msg });
+	
+	msg+='</div><div class="hidden-comment">'+rawcomment+'</div>'
+	if(rawcomment!='') socket.emit('message', { value: msg });
+	$("#comment").val("");
 }
 // 切断する
 function DisConnect() {
@@ -69,6 +66,17 @@ function DisConnect() {
   // socketを切断する
   socket.disconnect();
 }
+
+$(document).ready(
+	function(){
+		$('#comment').gpKey("down",
+			{
+				"^enter":function(){SendMsg();},
+				"^up":function(){var str = $(".hidden-comment:last").text(); $('#comment').val(str);}
+			}
+		);
+	}
+);
 </script>
 <div id="content" class="grid_12"></div>
 <div class="clear"></div>
@@ -76,11 +84,7 @@ function DisConnect() {
 <form name="formname">
 <input name="id" type="hidden" value="<?php echo $id; ?>">
 　Name: <input id="name" name="name" type="text" /><br />
-<!--　Mode: <input name="mode" type="radio" value="0" checked/>text
-<input name="mode" type="radio" value="1" />equation
-<input name="mode" type="radio" value="2" />figure<br />
-　Content:<br />-->
- <textarea id="comment" name="content" cols="100" rows="5"></textarea><br />
+ <textarea id="comment" class="comment" name="content" cols="100" rows="5"></textarea><br />
 　<input id="submit_btn" type="button" value="submit" onclick="SendMsg()" />
 　<input id="reset_btn" type="reset" value="reset" /><br/>
 </form>

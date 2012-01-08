@@ -45,3 +45,7 @@ body{
 	margin-bottom: 10px;
 	font-size: 9px;
 }
+
+.hidden-comment{
+	display: none;
+}
