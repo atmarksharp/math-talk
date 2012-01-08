@@ -21,10 +21,8 @@ body{
 }
 
 .post_article{
-	padding-left: 15px;
 	padding-top: 15px;
 	padding-bottom: 15px;
-	padding-right: 15px;
 	border-bottom: 1px #ddd solid;
 	display: none;
 }
@@ -38,12 +36,13 @@ body{
 
 .content-body{
 	font-size: 10pt;
-	padding-left: 10px;
+	padding-left: 20px;
 }
 
 .content-name{
 	margin-bottom: 10px;
 	font-size: 9px;
+	padding-left: 10px;
 }
 
 .hidden-comment{

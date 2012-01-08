@@ -18,7 +18,7 @@ function SendMsg() {
 	var rawcomment=comment;
 	if(comment=="/help") name = "MathTalk System"
 	var msg = '';
-	myTbl     = new Array("日","月","火","水","木","金","土");
+	myTbl     = new Array("sun","mon","tue","wed","thu","fri","sat");
 	myD       = new Date();
 
 	myYear    = myD.getYear()
@@ -30,12 +30,12 @@ function SendMsg() {
 	myMinutes = myD.getMinutes();
 	mySeconds = myD.getSeconds();
 
-	myMess1   = myYear4 + "年" + myMonth + "月" + myDate + "日";
+	myMess1   = myYear4 + "." + myMonth + "." + myDate + ".";
 	myMess2   = "("+myTbl[myDay] + ")";
-	myMess3   = myHours + "時" + myMinutes + "分" + mySeconds + "秒";
+	myMess3   = myHours + ":" + myMinutes + ":" + mySeconde;
 	date    = myMess1 + " " + myMess2 + " " + myMess3;
 		
-	msg = '<div class="post_article grid_12"><div class="content-name">'+name+': '+date+'</div><div class="content-body">';
+	msg = '<div class="post_article grid_12 alpha"><div class="content-name">'+name+': '+date+'</div><div class="content-body">';
 	comment = comment.replace(/(http:\/\/[\x21-\x7e]+\.[\x21-\x7e]+)/gi, "<a href='$1' target='_blank'>$1</a>");
 	if(comment!="/help"){
 		var resArray=comment.split("$");
@@ -65,14 +65,6 @@ function SendMsg() {
 		alert("name is empty.");
 	}
 }
-// 切断する
-function DisConnect() {
-  var msg = socket.socket.transport.sessid + "は切断しました。";
-  // メッセージを発射する
-  socket.emit('message', { value: msg });
-  // socketを切断する
-  socket.disconnect();
-}
 
 $(document).ready(
 	function(){
@@ -85,7 +77,7 @@ $(document).ready(
 	}
 );
 </script>
-<div id="content" class="grid_12"></div>
+<div id="content" class=""></div>
 <div class="clear"></div>
 <br>
 <form name="formname">
