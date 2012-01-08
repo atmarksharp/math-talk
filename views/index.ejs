@@ -7,6 +7,7 @@ var preName = 'guest';
 var preRoom = '';
 var changeNameFlag = true;
 var changeRoomFlag = true;
+var debug = false;
 
 soundManager.url = './swf/';
 soundManager.debugMode = false;
@@ -15,7 +16,7 @@ soundManager.onload = function() {
 	sound_po = soundManager.createSound({
 		id: 'po',
 		url: './sounds/po.wav',
-		volume: 10   
+		volume: 50   
 	});
 }
 
@@ -192,7 +193,7 @@ socket.on('message', function(msg) {
 	var roomname = msg.value.substring(0,key);
 	var msgcontent = msg.value.substr(key+1);
 	
-	if(roomname==document.getElementById("room").value){
+	if(roomname==document.getElementById("room").value || debug){
 		$("#content").append(msgcontent);
 		$(".post_article").fadeIn("1500");
 		$(".delayerase").delay("5000").slideUp("1500",function(){ $(this).remove(); });
@@ -200,7 +201,7 @@ socket.on('message', function(msg) {
 		var e = document.getElementById("content");
 		e.scrollTop = e.scrollHeight+1000000;
 		
-		if(!document.formname.mute.checked) sound_po.play();
+		if(!document.formname.mute.checked)　sound_po.play();
 	}
 });
 
@@ -228,7 +229,6 @@ function SendMsg() {
 		msg += '</div>';
 		msg += '<div class="content-body">';
 		
-
 	if(comment!="/help"){
 		var resArray=comment.split("$");
 		for(var i=0; i<resArray.length; i++){
@@ -282,6 +282,9 @@ $(document).ready(
 	function(){
 		$('#comment').gpKey("down",
 			{
+				"^&D":function(){
+					debug = !debug;
+				},
 				"^enter":function(){
 					SendMsg();
 				},

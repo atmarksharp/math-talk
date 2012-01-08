@@ -86,6 +86,7 @@ body{
 #info{
 	float: left;
 	font-size: 6pt;
+	width: 50px;
 }
 
 .editorlink{
