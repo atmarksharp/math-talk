@@ -1,15 +1,42 @@
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
+var counter = 0;
+var nowcounter = 0;
 var socket = io.connect(window.location.href);
 socket.on('connect', function(msg) {
-  console.log("connet");
+  //console.log("connect");
 });
 
+var nameFormOn = function(){
+	$("#name-div").css("display","block");
+	$("#name-div-link").css("display","none");
+}
+var nameFormOff = function(){
+	$("#name-div").css("display","none");
+	$("#name-div-link").css("display","block");
+	$("#info").text("name: "+document.getElementById("name").value+"  room: "+document.getElementById("room").value);
+}
+
+var roomFormOn = function(){
+	$("#room-div").css("display","block");
+	$("#room-div-link").css("display","none");
+}
+var roomFormOff = function(){
+	$("#room-div").css("display","none");
+	$("#room-div-link").css("display","block");
+	$("#info").text("name: "+document.getElementById("name").value+"  room: "+document.getElementById("room").value);
+}
+
 socket.on('message', function(msg) {
-	$("#content").append(msg.value);
-	$(".post_article:hidden").fadeIn("1500");
-	var e = document.getElementById("content");
-	e.scrollTop = e.scrollHeight;
+	var key = msg.value.indexOf("\:",0);
+	var roomname = msg.value.substring(0,key);
+	var msgcontent = msg.value.substr(key+1);
+	if(roomname==document.getElementById("room").value){
+		$("#content").append(msgcontent);
+		$(".post_article:hidden").fadeIn("1500");
+		var e = document.getElementById("content");
+		e.scrollTop = e.scrollHeight;
+	}
 });
 
 function SendMsg() {
@@ -18,6 +45,7 @@ function SendMsg() {
 	var rawcomment=comment;
 	if(comment=="/help") name = "MathTalk System"
 	var msg = '';
+	var room = document.getElementById("room").value;
 	myTbl     = new Array("sun","mon","tue","wed","thu","fri","sat");
 	myD       = new Date();
 
@@ -34,8 +62,9 @@ function SendMsg() {
 	myMess2   = "("+myTbl[myDay] + ")";
 	myMess3   = myHours + ":" + myMinutes + ":" + mySeconds;
 	date    = myMess1 + " " + myMess2 + " " + myMess3;
-		
-	msg = '<div class="post_article grid_12 alpha"><div class="content-name">'+name+': '+date+'</div><div class="content-body">';
+	
+	msg += room+'\:';
+	msg += '<div class="post_article grid_12 alpha"><div class="content-name">'+name+': '+date+'</div><div class="content-body">';
 	comment = comment.replace(/(http:\/\/[\x21-\x7e]+\.[\x21-\x7e]+)/gi, "<a href='$1' target='_blank'>$1</a>");
 	if(comment!="/help"){
 		var resArray=comment.split("$");
@@ -54,16 +83,29 @@ function SendMsg() {
 		msg+= "　　Ctrl+Enter: submit<br />";
 		msg+= "　　Ctrl+↑: history<br />";
 	}
-	
-	msg+='</div><div class="hidden-comment">'+rawcomment+'</div>'
-	if(rawcomment!=''&&name!=''){
-		socket.emit('message', { value: msg });
-		$("#name-div").css("display","none");
-		$("#comment").val("");
-	}
+		
+	var errorMsg='';
 	if(name==''){
-		alert("name is empty.");
+		errorMsg+="name is empty.";
+	}else{
+		nameFormOff();
 	}
+	if(room==''){
+		errorMsg+="room name is empty";
+	}else{
+		roomFormOff();
+	}
+	
+	if(rawcomment!=''&&name!=''&&room!=''){
+		counter++;
+		nowcounter=counter;
+		msg+='</div><div class="hidden-comment" id="'+name+'\-'+counter+'">'+rawcomment+'</div>'
+		socket.emit('message', { value: msg });
+		$("#comment").val("");
+	}else if(rawcomment!=''){
+		alert(errorMsg);
+	}
+
 }
 
 $(document).ready(
@@ -71,7 +113,18 @@ $(document).ready(
 		$('#comment').gpKey("down",
 			{
 				"^enter":function(){SendMsg();},
-				"^up":function(){var str = $(".hidden-comment:last").text(); $('#comment').val(str);}
+				"^up":function(){
+					(nowcounter>1)?nowcounter--:nowcounter=1;
+					var id = "#"+document.getElementById("name").value+"\-"+nowcounter;
+					var str = $(id).text();
+					$('#comment').val(str);
+				},
+				"^down":function(){
+					(nowcounter<counter)?nowcounter++:nowcounter=counter;
+					var id = "#"+document.getElementById("name").value+"\-"+nowcounter;
+					var str = $(id).text();
+					$('#comment').val(str);
+				}
 			}
 		);
 	}
@@ -82,7 +135,12 @@ $(document).ready(
 <br>
 <form name="formname">
 <input name="id" type="hidden" value="<?php echo $id; ?>">
-　<div id="name-div">Name: <input id="name" name="name" type="text" /></div><br />
+<div id="info"></div>
+　<div id="name-div">Name: <input id="name" name="name" type="text" /></div>
+<div id="name-div-link" onclick="nameFormOn()">change name</div>
+ <div id="room-div">Room: <input id="room" name="room" type="text" /></div>
+<div id="room-div-link" onclick="roomFormOn()">change room</div>
+<div class="clear"></div>
  <textarea id="comment" class="comment" name="content" cols="100" rows="5"></textarea><br />
 　<input id="submit_btn" type="button" value="submit" onclick="SendMsg()" />
 　<input id="reset_btn" type="reset" value="reset" /><br/>

@@ -50,6 +50,39 @@ body{
 }
 
 #name-div{
-	margin: 0;
+	margin-left: 10px;
 	padding: 0;
+	float:left;
+	font-size: 6pt;
+}
+
+#name-div-link{
+	color: #00f;
+	text-decoration: underline;
+	margin-left: 10px;
+	padding:0;
+	float : left;
+	font-size: 6pt;
+	display: none;
+}
+
+#room-div{	
+	margin-left: 10px;
+	padding: 0;
+	float:left;
+	font-size: 6pt;
+}
+#room-div-link{
+	margin-left:10px;
+	padding:0;
+	float:left;
+	font-size: 6pt;
+	display: none;
+	color: #00f;
+	text-decoration: underline;
+}
+
+#info{
+	float: left;
+	font-size: 6pt;
 }
