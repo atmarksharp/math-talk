@@ -4,6 +4,7 @@ var counter = 0;
 var nowcounter = 0;
 var socket = io.connect(window.location.href);
 var preName = 'guest';
+var preRoom = '';
 var changeNameFlag = true;
 var changeRoomFlag = true;
 
@@ -29,17 +30,24 @@ var getDateAndTime = function(){
 	return date;
 }
 
-
 /////////////////////////////////////////////////////////////
 var welcome = function(){
 	var name = document.getElementById("name").value;
 	var room = document.getElementById("room").value;
 	var date=getDateAndTime();
 	var msg= room + '\:';
-	msg += '<div class="post_article grid_12 alpha color-light delayerase"><div class="content-name"><span class="namespan">MathTalk System</span>: <span>'+date+'</span></div><div class="content-body">';
-	msg+= '<span class="bold">'+preName+'</span> has come in this chatroom. roomname: <span class="bold">'+room+'</span>.<br />' 
-	msg+= "Welcome!"
-	msg+='</div><div class="hidden-comment">'+'welcome'+'</div>'+'</div>'
+	msg += '<div class="post_article grid_12 alpha color-light delayerase">';
+		msg += '<div class="content-name">';
+			msg += '<span class="namespan">MathTalk System</span>: <span>'+date+'</span>';
+		msg += '</div>';
+		msg += '<div class="content-body">';
+			msg += '<span class="bold">'+preName+'</span> has come in this chatroom.<br />';
+			msg +='roomname: <span class="bold">'+room+'</span>.<br />' 
+			msg += "Welcome!"
+		msg += '</div>'
+		msg += '<div class="hidden-comment">'+'welcome';
+		msg += '</div>';
+	msg += '</div>'
 	
 	socket.emit('message', { value: msg });
 }
@@ -49,35 +57,48 @@ var changeName = function(){
 	var room = document.getElementById("room").value;
 	var date=getDateAndTime();
 	var msg= room + '\:';
-	msg += '<div class="post_article grid_12 alpha color-light delayerase"><div class="content-name"><span class="namespan">MathTalk System</span>: <span>'+date+'</span></div><div class="content-body">';
-	msg+= '<span class="bold">'+preName+'</span> has changed name to <span class="bold">'+name+'</span>.' 
-	msg+='</div><div class="hidden-comment">'+'welcome'+'</div>'+'</div>';
+	msg += '<div class="post_article grid_12 alpha color-light delayerase">';
+		msg += '<div class="content-name">';
+			msg +='<span class="namespan">MathTalk System</span>: <span>'+date+'</span>'
+		msg += '</div>';
+		msg += '<div class="content-body">';
+			msg += '<span class="bold">'+preName+'</span> has changed name to <span class="bold">'+name+'</span>.' 
+		msg += '</div>';
+		msg += '<div class="hidden-comment">'+'welcome';
+		msg +='</div>';
+	msg += '</div>';
 	socket.emit('message', { value: msg });
 }
 
 var help = function(){
 	var date=getDateAndTime();
 	var msg='';
-	msg += '<div class="post_article grid_12 alpha"><div class="content-name"><span class="namespan">MathTalk System</span>: <span>'+date+'</span></div><div class="content-body">';
-	msg+= '<img src="./images/mathtalkmini.png" alt="mathtalk" /> v0.2<br/>'
-	msg+= "help file:<br />　　<span class='bold'>$ LaTeX commands $</span> : "+'<img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent("\\LaTeX")+'" alt="LaTeX" /><br />';
-	msg+= "　　<span class='bold'>Ctrl+Enter</span>: submit<br />";
-	msg+= "　　<span class='bold'>Ctrl+↑ or Ctrl+↓</span>: history<br />";
-	msg+= '　　<span class="bold">Ctrl+E</span>: open <img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent("\\LaTeX")+'" alt="LaTeX" /> Editor'
-	msg+='</div><div class="hidden-comment">'+'help'+'</div>'+'</div>'
+	msg += '<div class="post_article grid_12 alpha">';
+		msg += '<div class="content-name">';
+			msg += '<span class="namespan">MathTalk System</span>: <span>'+date+'</span>';
+		msg += '</div>';
+		msg += '<div class="content-body">';
+			msg += '<img src="./images/mathtalkmini.png" alt="mathtalk" /> v0.2<br/>'
+			msg += "help file:<br />";
+			msg += '　　<span class="bold">$ LaTeX commands $</span> : <img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent("\\LaTeX")+'" alt="LaTeX" /><br />';
+			msg+= "　　<span class='bold'>Ctrl+Enter</span>: submit<br />";
+			msg+= "　　<span class='bold'>Ctrl+↑ or Ctrl+↓</span>: history<br />";
+			msg+= '　　<span class="bold">Ctrl+E</span>: open <img src="http://chart.apis.google.com/chart?cht=tx&chs=1x0&chf=bg,s,FFFFFF&chco=000000&chl='+encodeURIComponent("\\LaTeX")+'" alt="LaTeX" /> Editor'
+		msg += '</div>';
+		msg += '<div class="hidden-comment">';
+			msg += 'help';
+		msg += '</div>';
+	msg += '</div>';
 	
 	$("#content").append(msg);
+	
 	$(".post_article").fadeIn("1500");
+	
 	var e = document.getElementById("content");
 	e.scrollTop = e.scrollHeight+1000000;
+	
 	$("#comment").val("");
 }
-
-
-/////////////////////////////////////////////////////////////
-socket.on('connect', function(msg) {
-	help();
-});
 
 //////////////////////////////////////////////////////////////
 var nameFormOn = function(){
@@ -90,7 +111,7 @@ var nameFormOff = function(){
 	if(changeNameFlag){
 		$("#name-div").css("display","none");
 		$("#name-div-link").css("display","block");
-		changeName();
+		if(document.getElementById("name").value != preName) changeName();
 		$("#info").text("name: "+document.getElementById("name").value+" room: "+document.getElementById("room").value);
 		preName = document.getElementById("name").value;
 	}
@@ -107,22 +128,34 @@ var roomFormOff = function(){
 	if(changeRoomFlag){
 		$("#room-div").css("display","none");
 		$("#room-div-link").css("display","block");
-		welcome();
+		if(document.getElementById("room").value != preRoom) welcome();
 		$("#info").text("name: "+document.getElementById("name").value+" room: "+document.getElementById("room").value);
+		preRoom = document.getElementById("room").value;
 	}
 	changeRoomFlag=false;
 }
 
-//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+$(document).ready(function(){
+	help();
+});
 
+/////////////////////////////////////////////////////////////
+socket.on('connect', function(msg) {
+
+});
+
+//////////////////////////////////////////////////////////////////
 socket.on('message', function(msg) {
 	var key = msg.value.indexOf("\:",0);
 	var roomname = msg.value.substring(0,key);
 	var msgcontent = msg.value.substr(key+1);
+	
 	if(roomname==document.getElementById("room").value){
 		$("#content").append(msgcontent);
 		$(".post_article").fadeIn("1500");
 		$(".delayerase").delay("5000").slideUp("1500",function(){ $(this).remove(); });
+		
 		var e = document.getElementById("content");
 		e.scrollTop = e.scrollHeight+1000000;
 	}
@@ -133,19 +166,26 @@ socket.on('message', function(msg) {
 function SendMsg() {
 	var name = document.getElementById("name").value;
 	var comment = document.getElementById("comment").value;
+
 	var rawcomment=comment;
 	if(comment=="/help") name = "MathTalk System"
 	comment = comment.replace(/\\\[/g, "$");
 	comment = comment.replace(/\\\]/g, "$")
+	comment = comment.replace(/(http:\/\/[\x21-\x7e]+\.[\x21-\x7e]+)/gi, "<a href='$1' target='_blank'>$1</a>");
+	comment = comment.replace(/\$[\\|\¥]MaThTaLk\$/g, '<img src="./images/mathtalkmini.png" alt="mathtalk" />');
+
 	var msg = '';
 	var room = document.getElementById("room").value;
-	
 	var date = getDateAndTime();
 	
 	msg += room+'\:';
-	msg += '<div class="post_article grid_12 alpha"><div class="content-name"><span class="namespan">'+name+'</span>: <span>'+date+'</span></div><div class="content-body">';
-	comment = comment.replace(/(http:\/\/[\x21-\x7e]+\.[\x21-\x7e]+)/gi, "<a href='$1' target='_blank'>$1</a>");
-	comment = comment.replace(/\$[\\|\¥]MaThTaLk\$/g, '<img src="./images/mathtalkmini.png" alt="mathtalk" />');
+	msg += '<div class="post_article grid_12 alpha">';
+		msg += '<div class="content-name">';
+			msg += '<span class="namespan">'+name+'</span>: <span>'+date+'</span>';
+		msg += '</div>';
+		msg += '<div class="content-body">';
+		
+
 	if(comment!="/help"){
 		var resArray=comment.split("$");
 		for(var i=0; i<resArray.length; i++){
@@ -159,27 +199,37 @@ function SendMsg() {
 			}
 		}
 		
+		//error
 		var errorMsg='';
+		
 		if(name==''){
 			errorMsg+="name is empty.\n";
 		}else{
 			nameFormOff();
 		}
+		
 		if(room==''){
 			errorMsg+="room name is empty.";
 		}else{
 			roomFormOff();
 		}
+		
+		msg += '</div>';
+		msg += '<div class="hidden-comment" id="'+name+'\-'+counter+'">';
+			msg += rawcomment;
+		msg += '</div>';
+	msg += '</div>';
 	
 		if(rawcomment!=''&&name!=''&&room!=''){
-			msg+='</div><div class="hidden-comment" id="'+name+'\-'+counter+'">'+rawcomment+'</div>'+'</div>';
 			socket.emit('message', { value: msg });
 			$("#comment").val("");
 		}else if(rawcomment!=''){
 			alert(errorMsg);
 		}
+		
 		counter++;
 		nowcounter=counter;
+		
 	}else{
 		help();
 	}
@@ -189,7 +239,9 @@ $(document).ready(
 	function(){
 		$('#comment').gpKey("down",
 			{
-				"^enter":function(){SendMsg();},
+				"^enter":function(){
+					SendMsg();
+				},
 				"^up":function(){
 					(nowcounter>0)?nowcounter--:nowcounter=0;
 					var id = "#"+document.getElementById("name").value+"\-"+nowcounter;
@@ -215,18 +267,17 @@ $(document).ready(
 <div class="clear"></div>
 <br>
 <form name="formname">
-<div id="info"></div>
-　<div id="name-div">Name: <input id="name" name="name" type="text" /></div>
-<div id="name-div-link" onclick="nameFormOn()">change name</div>
- <div id="room-div">Room: <input id="room" name="room" type="text" /></div>
-<div id="room-div-link" onclick="roomFormOn()">change room</div>
-<div class="clear"></div>
- <textarea id="comment" class="comment" name="content" cols="100" rows="5"></textarea><br />
-　<input id="submit_btn" type="button" value="submit" onclick="SendMsg()" />
-　<input id="reset_btn" type="reset" value="reset" />
-<a href="javascript:OpenLatexEditor('comment','latex','',false,'','full');" class="editorlink">
-Editor by CodeCogs
-</a>
-
+	<div id="info"></div>
+	<div id="name-div">Name: <input id="name" name="name" type="text" /></div>
+	<div id="name-div-link" onclick="nameFormOn()">change name</div>
+	<div id="room-div">Room: <input id="room" name="room" type="text" /></div>
+	<div id="room-div-link" onclick="roomFormOn()">change room</div>
+	<div class="clear"></div>
+	<textarea id="comment" class="comment" name="content" cols="100" rows="5"></textarea><br />
+	<input id="submit_btn" type="button" value="submit" onclick="SendMsg()" />
+	<input id="reset_btn" type="reset" value="reset" />
+	<a href="javascript:OpenLatexEditor('comment','latex','',false,'','full');" class="editorlink">
+		Editor by CodeCogs
+	</a>
 </form>
 <div id="receiveMsg"></div>
