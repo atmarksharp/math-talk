@@ -218,7 +218,7 @@ socket.on('message', function(msg) {
 	var key = msg.value.indexOf("\:",0);
 	var roomname = msg.value.substring(0,key);
 	var msgcontent = msg.value.substr(key+1);
-	alert(roomname);
+	
 	if(roomname==document.getElementById("room").value || debug || roomname=="/forall"){
 		$("#content").append(msgcontent);
 		$(".post_article").fadeIn("1500");
